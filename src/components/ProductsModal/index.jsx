@@ -1,6 +1,6 @@
 import React from "react";
 
-const ProductModal = ({ handleClick }) => {
+const ProductModal = ({ handleClick, productData }) => {
   return (
     <div>
       <div
@@ -46,35 +46,44 @@ const ProductModal = ({ handleClick }) => {
                     />
                   </div>
                 </form>
-                <div className="flex border-b-2  border-lightgray p-2">
-                  <input
-                    id="default-checkbox"
-                    type="checkbox"
-                    value=""
-                    className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
-                  />
-                  <img src="favicon.ico" className="w-9 h-9 " />
-                  <p className="font-normal text-base mx-2">
-                    Long Socks - Made with natural materials
-                  </p>
-                </div>
-                {/* variants */}
-                <div className="flex border-b-2  border-lightgray p-2 pl-10">
-                  <input
-                    id="default-checkbox"
-                    type="checkbox"
-                    value=""
-                    className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
-                  />
-                  <p className="font-normal text-base mx-2 w-2/3 ">
-                    S/WHITE?COTTON
-                  </p>
 
-                  <p className="font-normal text-base mx-2 w-24">
-                    99 Available
-                  </p>
-                  <p className="font-normal text-base mx-2 w-24">$3.99</p>
-                </div>
+                {productData.map((product) => {
+                  return (
+                    <div key={product.id}>
+                      <div className="flex border-b-2  border-lightgray p-2">
+                        <input
+                          id="default-checkbox"
+                          type="checkbox"
+                          value=""
+                          className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
+                        />
+                        <img src={product.image.src} className="w-9 h-9 " />
+                        <p className="font-normal text-base mx-2">
+                          {product.title}
+                        </p>
+                      </div>
+                      {/* variants */}
+                      <div className="flex border-b-2  border-lightgray p-2 pl-10">
+                        <input
+                          id="default-checkbox"
+                          type="checkbox"
+                          value=""
+                          className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
+                        />
+                        <p className="font-normal text-base mx-2 w-2/3 ">
+                          {product.variants[0].title}
+                        </p>
+
+                        <p className="font-normal text-base mx-2 w-24">
+                          99 Available
+                        </p>
+                        <p className="font-normal text-base mx-2 w-24">
+                          ${product.variants[0].price}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
