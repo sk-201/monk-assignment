@@ -4,29 +4,23 @@ const ProductModal = ({ handleClick }) => {
   return (
     <div>
       <div
-        className="relative z-10"
+        className="relative z-10 "
         aria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
       >
         <div
-          className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+          className="fixed inset-0 bg-gray bg-opacity-75 transition-opacity "
           aria-hidden="true"
         ></div>
 
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <p>Select Products</p>
+        <div className="fixed inset-0 z-10 w-screen overflow-y-auto ">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 ">
+            <div className="relative transform rounded-lg  bg-white text-left shadow-xl transition-all w-2/3 h-screen">
+              <div className="bg-white">
+                <p className="font-medium text-lg p-2">Select Products</p>
 
-                <form className="max-w-md mx-auto">
-                  <label
-                    for="default-search"
-                    className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-                  >
-                    Search
-                  </label>
+                <form className=" my-4  border-lightgray p-2 border-y-2 px-12">
                   <div className="relative">
                     <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                       <svg
@@ -37,7 +31,7 @@ const ProductModal = ({ handleClick }) => {
                         viewBox="0 0 20 20"
                       >
                         <path
-                          stroke="currentColor"
+                          stroke="#00000066"
                           stroke-linecap="round"
                           stroke-linejoin="round"
                           stroke-width="2"
@@ -46,36 +40,53 @@ const ProductModal = ({ handleClick }) => {
                       </svg>
                     </div>
                     <input
-                      type="search"
                       id="default-search"
-                      className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      placeholder="Search Mockups, Logos..."
-                      required
+                      className="block  w-full p-4  ps-10 text-sm text-gray-900  rounded-lg  border border-searchBar outline-none "
+                      placeholder="Search Product"
                     />
                   </div>
                 </form>
-                <div className="flex">
+                <div className="flex border-b-2  border-lightgray p-2">
                   <input
                     id="default-checkbox"
                     type="checkbox"
                     value=""
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
                   />
-                  <img src="favicon.ico" width={10} height={4} />
-                  <p>Long Socks - Made with natural materials</p>
+                  <img src="favicon.ico" className="w-9 h-9 " />
+                  <p className="font-normal text-base mx-2">
+                    Long Socks - Made with natural materials
+                  </p>
+                </div>
+                {/* variants */}
+                <div className="flex border-b-2  border-lightgray p-2 pl-10">
+                  <input
+                    id="default-checkbox"
+                    type="checkbox"
+                    value=""
+                    className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
+                  />
+                  <p className="font-normal text-base mx-2 w-2/3 ">
+                    S/WHITE?COTTON
+                  </p>
+
+                  <p className="font-normal text-base mx-2 w-24">
+                    99 Available
+                  </p>
+                  <p className="font-normal text-base mx-2 w-24">$3.99</p>
                 </div>
               </div>
               <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   type="button"
-                  className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                  className="inline-flex w-7 justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                 >
                   Add
                 </button>
                 <button
                   type="button"
                   onClick={handleClick}
-                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                  className="mt-3 inline-flex w-12 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-darkgray shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
                   Cancel
                 </button>
