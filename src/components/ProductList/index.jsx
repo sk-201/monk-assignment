@@ -1,34 +1,14 @@
 import React, { useState, useEffect } from "react";
 import ProductModal from "../ProductsModal";
-import axios from "axios";
+
 const ProductList = () => {
   const [showModal, setShowModal] = useState(false);
-  const [productData, setProductData] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
   const handleClick = () => {
+    console.log("clicked");
     setShowModal(!showModal);
   };
 
-  const getProductData = async () => {
-    try {
-      const response = await axios.get(
-        "/task/products/search?search=Hat&page=2&limit=1",
-        {
-          headers: {
-            "x-api-key": "72njgfa948d9aS7gs5",
-          },
-        }
-      );
-      setProductData(response.data);
-    } catch (error) {
-      console.log("ERROR:", error);
-    }
-  };
-  useEffect(() => {
-    if (showModal) {
-      getProductData();
-    }
-  }, [showModal]);
-  console.log("P", productData);
   return (
     <div className="w-full  flex flex-col justify-center items-center ">
       <div className="flex self-start w-2/3 self-end mb-4 pl-12 mt-28">
@@ -142,9 +122,7 @@ const ProductList = () => {
       >
         Add Product
       </button>
-      {showModal ? (
-        <ProductModal handleClick={handleClick} productData={productData} />
-      ) : null}
+      {showModal ? <ProductModal handleClick={handleClick} /> : null}
     </div>
   );
 };
