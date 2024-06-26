@@ -1,10 +1,13 @@
 import ProductList from "./components/ProductList";
+import { ProductProvider } from "./contexts/ProductContext";
 
 function App() {
   return (
-    <div className="w-full h-screen">
-      <ProductList />
-    </div>
+    <ProductProvider>
+      <div className="w-full h-screen">
+        <ProductList />
+      </div>
+    </ProductProvider>
   );
 }
 
