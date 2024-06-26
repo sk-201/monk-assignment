@@ -10,6 +10,8 @@ const ProductModal = ({ handleClick }) => {
   const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState([]);
   const [search, setSearch] = useState("");
+
+  //Calling Api for products
   const getProductData = async () => {
     setLoading(true);
     try {
@@ -25,18 +27,19 @@ const ProductModal = ({ handleClick }) => {
         setProductData((prevProducts) => [...prevProducts, ...response.data]);
         setCurrentPage((prevPage) => prevPage + 1);
       }
-
       setLoading(false);
     } catch (error) {
       console.log("ERROR:", error);
     }
   };
+  // Handling Search Input
   const handleSearch = (e) => {
     if (search === "") {
       setCurrentPage(1);
     }
     setSearch(e.target.value);
   };
+  //Handling check functionality for products as well as variants
   const handleCheck = (id, variant = false) => {
     setSelectedId((prevIds) => {
       if (variant) {
@@ -62,26 +65,7 @@ const ProductModal = ({ handleClick }) => {
       }
     });
   };
-
-  useEffect(() => {
-    const modal = document.querySelector(".bg-white.overflow-y-auto");
-
-    modal.addEventListener("scroll", () => {
-      if (modal.scrollTop + modal.clientHeight == modal.scrollHeight) {
-        console.log("called");
-        getProductData();
-      }
-    });
-  }, [currentPage]);
-  const handleLoad = () => {
-    const modal = document.querySelector(".bg-white.overflow-y-auto");
-    modal.scrollTo({
-      top: 100,
-      left: 100,
-      behavior: "smooth",
-    });
-    getProductData();
-  };
+  //Handling logic after user clicks on Add product
   const handleAdd = () => {
     if (selectedId.length === 0) {
       return;
@@ -112,12 +96,20 @@ const ProductModal = ({ handleClick }) => {
     setSelectedId([]);
     handleClick();
   };
-
+  //using debounce functionality to minimise api calls
   useEffect(() => {
     const getData = setTimeout(getProductData, 2000);
     return () => clearTimeout(getData);
   }, [search]);
-
+  // Infinite loading if the user scrolls to the end
+  useEffect(() => {
+    const modal = document.querySelector(".bg-white.overflow-y-auto");
+    modal.addEventListener("scroll", () => {
+      if (modal.scrollTop + modal.clientHeight == modal.scrollHeight) {
+        getProductData();
+      }
+    });
+  }, [currentPage]);
   return (
     <div>
       <div
@@ -153,21 +145,11 @@ const ProductModal = ({ handleClick }) => {
                   <form className=" my-4  border-lightgray p-2 border-y-2 px-12">
                     <div className="relative">
                       <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg
+                        <img
                           className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            stroke="#00000066"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                          />
-                        </svg>
+                          src="./assets/search.svg"
+                          alt="search-icon"
+                        />
                       </div>
                       <input
                         id="default-search"
@@ -178,6 +160,7 @@ const ProductModal = ({ handleClick }) => {
                       />
                     </div>
                   </form>
+                  {/* Mapping of products */}
                   {productData?.map((product) => {
                     return (
                       <div key={product.id}>
@@ -189,6 +172,7 @@ const ProductModal = ({ handleClick }) => {
                             onClick={() => handleCheck(product.id, true)}
                             className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
                           />
+                          {/* Lazyloading Images for better performance */}
                           <LazyLoad height={36} once>
                             <img src={product.image.src} className="w-9 h-9 " />
                           </LazyLoad>
@@ -197,7 +181,7 @@ const ProductModal = ({ handleClick }) => {
                             {product.title}
                           </p>
                         </div>
-                        {/* variants */}
+                        {/*Mapping  variants  */}
                         {product?.variants?.map((variant) => {
                           return (
                             <div className="flex border-b-2  border-lightgray p-2 pl-10">
@@ -227,7 +211,7 @@ const ProductModal = ({ handleClick }) => {
                     );
                   })}
 
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6   mb-12  ">
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6   mb-24  ">
                     <button
                       type="button"
                       className="inline-block w-7 justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"

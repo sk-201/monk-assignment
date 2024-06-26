@@ -7,15 +7,16 @@ const ProductList = () => {
   const [showModal, setShowModal] = useState(false);
 
   const { selectedProducts, setSelectedProducts } = useContext(ProductContext);
-  //  const [selectedProducts, ] = useState(defaultProduct);
   const onSortEnd = (oldIndex, newIndex) => {
     setSelectedProducts((array) =>
       arrayMoveImmutable(array, oldIndex, newIndex)
     );
   };
+  //handling modal state
   const handleClick = () => {
     setShowModal(!showModal);
   };
+  //adds a empty product at the end
   const handleAddNewProduct = () => {
     let newObject = {
       id: selectedProducts.length + 1,
@@ -24,6 +25,7 @@ const ProductList = () => {
     };
     setSelectedProducts((products) => [...products, newObject]);
   };
+  //hadnling the showDiscount functionality
   const handleShowDiscount = (productId) => {
     setSelectedProducts((prevProducts) =>
       prevProducts.map((product) => {
@@ -43,7 +45,7 @@ const ProductList = () => {
         <p className="font-semibold text-sm ">Product</p>
         <p className="font-semibold text-sm ">Discount</p>
       </div>
-      {/* products map */}
+      {/* Mapping products */}
       <SortableList
         onSortEnd={onSortEnd}
         className="list"

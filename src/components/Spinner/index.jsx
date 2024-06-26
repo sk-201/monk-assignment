@@ -19,7 +19,6 @@ const Spinner = () => {
           fill="#008060"
         />
       </svg>
-      <span className="sr-only">Loading...</span>
     </div>
   );
 };
