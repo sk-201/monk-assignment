@@ -105,7 +105,7 @@ const ProductModal = ({ handleClick }) => {
   useEffect(() => {
     const modal = document.querySelector(".bg-white.overflow-y-auto");
     modal.addEventListener("scroll", () => {
-      if (modal.scrollTop + modal.clientHeight == modal.scrollHeight) {
+      if (modal.scrollTop + modal.clientHeight === modal.scrollHeight) {
         getProductData();
       }
     });
@@ -174,7 +174,11 @@ const ProductModal = ({ handleClick }) => {
                           />
                           {/* Lazyloading Images for better performance */}
                           <LazyLoad height={36} once>
-                            <img src={product.image.src} className="w-9 h-9 " />
+                            <img
+                              src={product.image.src}
+                              className="w-9 h-9 "
+                              alt={`${product.title}-image`}
+                            />
                           </LazyLoad>
 
                           <p className="font-normal text-base mx-2">
