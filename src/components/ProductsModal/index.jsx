@@ -2,30 +2,39 @@ import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import LazyLoad from "react-lazyload";
 import Spinner from "../Spinner";
-import debounce from "lodash/debounce";
 import { ProductContext } from "../../contexts/ProductContext";
 const ProductModal = ({ handleClick }) => {
-  const { selectedProducts, setSelectedProducts } = useContext(ProductContext);
-  // const [selectedProducts, setSelectedProducts] = useState();
+  const { setSelectedProducts } = useContext(ProductContext);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedId, setSelectedId] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState([]);
   const [search, setSearch] = useState("");
   const getProductData = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(
-        `/task/products/search?search=${search}&page=2&limit=10`,
+        `/task/products/search?search=${search}&page=${currentPage}&limit=10`,
         {
           headers: {
             "x-api-key": "72njgfa948d9aS7gs5",
           },
         }
       );
-      setProductData(response.data);
+      if (response.data.length !== 0) {
+        setProductData((prevProducts) => [...prevProducts, ...response.data]);
+        setCurrentPage((prevPage) => prevPage + 1);
+      }
+
+      setLoading(false);
     } catch (error) {
       console.log("ERROR:", error);
     }
   };
   const handleSearch = (e) => {
+    if (search === "") {
+      setCurrentPage(1);
+    }
     setSearch(e.target.value);
   };
   const handleCheck = (id, variant = false) => {
@@ -35,10 +44,17 @@ const ProductModal = ({ handleClick }) => {
         if (!product) return prevIds;
 
         const variantIds = product.variants.map((variant) => variant.id);
-        return [...prevIds, ...variantIds];
+
+        const newIds = variantIds.filter(
+          (variantId) => !prevIds.includes(variantId)
+        );
+
+        const updatedIds = prevIds.filter(
+          (prevId) => !variantIds.includes(prevId)
+        );
+        return [...updatedIds, ...newIds];
       } else {
-        const index = prevIds.indexOf(id);
-        if (index !== -1) {
+        if (prevIds.includes(id)) {
           return prevIds.filter((productId) => productId !== id);
         } else {
           return [...prevIds, id];
@@ -47,6 +63,31 @@ const ProductModal = ({ handleClick }) => {
     });
   };
 
+  useEffect(() => {
+    const modal = document.querySelector(".bg-white.overflow-y-auto");
+
+    modal.addEventListener("scroll", () => {
+      if (modal.scrollTop + modal.clientHeight == modal.scrollHeight) {
+        console.log("called");
+        getProductData();
+
+        // modal.scrollTo({
+        //   top: 100,
+        //   left: 100,
+        //   behavior: "smooth",
+        // });
+      }
+    });
+  }, [currentPage]);
+  const handleLoad = () => {
+    const modal = document.querySelector(".bg-white.overflow-y-auto");
+    modal.scrollTo({
+      top: 100,
+      left: 100,
+      behavior: "smooth",
+    });
+    getProductData();
+  };
   const handleAdd = () => {
     if (selectedId.length === 0) {
       return;
@@ -69,14 +110,16 @@ const ProductModal = ({ handleClick }) => {
             title: variant.title,
           })),
       }));
-    setSelectedProducts((prev) => [...prev, ...addedProducts]);
-    // setSelectedProducts((prev) => [...prev, addedProducts]);
+    setSelectedProducts((prev) => {
+      const filteredPrevProducts = prev.filter((product) => product.title);
+
+      return [...filteredPrevProducts, ...addedProducts];
+    });
     setSelectedId([]);
     handleClick();
   };
 
   useEffect(() => {
-    //implementing debounce logic
     const getData = setTimeout(getProductData, 2000);
     return () => clearTimeout(getData);
   }, [search]);
@@ -84,26 +127,26 @@ const ProductModal = ({ handleClick }) => {
   return (
     <div>
       <div
-        className="relative z-10 o "
+        className="relative z-10 overflow-y-auto "
         aria-labelledby="modal-title"
         role="dialog"
         aria-modal="true"
       >
         <div
-          className="fixed inset-0 bg-gray bg-opacity-75 transition-opacity "
+          className="fixed inset-0 bg-gray bg-opacity-75 transition-opacity overflow-y-auto  "
           aria-hidden="true"
         ></div>
 
-        <div className="fixed inset-0 z-10 w-screen overflow-y-auto ">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0 ">
-            {productData?.length === 0 ? (
-              <div className="transform rounded-lg  bg-white flex justify-center items-center shadow-xl transition-all w-2/3 h-[612px] my-12  ">
+        <div className="fixed inset-0 z-10 w-screen  overflow-y-auto  ">
+          <div className="flex min-h-full items-end   justify-center p-4 text-center sm:items-center sm:p-0  overflow-y-auto">
+            {loading === true || productData?.length === 0 ? (
+              <div className="transform rounded-lg  bg-white flex justify-center items-center shadow-xl transition-all w-2/3 h-screen my-12 overflow-y-auto ">
                 {" "}
                 <Spinner />
               </div>
             ) : (
-              <div className="relative transform rounded-lg  bg-white text-left shadow-xl transition-all w-2/3  h-screen  my-12   ">
-                <div className="bg-white">
+              <div className="relative transform rounded-lg  bg-white text-left shadow-xl transition-all w-2/3  h-[612px]  my-12 overflow-y-auto ">
+                <div className="bg-white overflow-y-auto">
                   <div className="flex justify-between items-center">
                     <p className="font-medium text-lg p-2">Select Products</p>
                     <img
@@ -136,6 +179,7 @@ const ProductModal = ({ handleClick }) => {
                         id="default-search"
                         className="block  w-full p-4  ps-10 text-sm text-gray-900  rounded-lg  border border-searchBar outline-none "
                         placeholder="Search Product"
+                        value={search}
                         onChange={handleSearch}
                       />
                     </div>
@@ -188,10 +232,11 @@ const ProductModal = ({ handleClick }) => {
                       </div>
                     );
                   })}
-                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 ">
+
+                  <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6   mb-12  ">
                     <button
                       type="button"
-                      className="inline-flex w-7 justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                      className="inline-block w-7 justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                       onClick={handleAdd}
                     >
                       Add
@@ -199,7 +244,7 @@ const ProductModal = ({ handleClick }) => {
                     <button
                       type="button"
                       onClick={() => handleClick()}
-                      className="mt-3 inline-flex w-12 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-darkgray shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                      className="mt-3 inline-block w-12 justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-darkgray shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                     >
                       Cancel
                     </button>
