@@ -70,12 +70,6 @@ const ProductModal = ({ handleClick }) => {
       if (modal.scrollTop + modal.clientHeight == modal.scrollHeight) {
         console.log("called");
         getProductData();
-
-        // modal.scrollTo({
-        //   top: 100,
-        //   left: 100,
-        //   behavior: "smooth",
-        // });
       }
     });
   }, [currentPage]);

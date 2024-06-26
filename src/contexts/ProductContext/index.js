@@ -12,7 +12,9 @@ export const ProductProvider = ({ children }) => {
     },
   ];
   const [selectedProducts, setSelectedProducts] = useState(defaultProduct);
-
+  useEffect(() => {
+    console.log(selectedProducts);
+  }, [selectedProducts]);
   return (
     <ProductContext.Provider
       value={{
