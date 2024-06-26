@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import LazyLoad from "react-lazyload";
 import Spinner from "../Spinner";
 import debounce from "lodash/debounce";
+import { ProductContext } from "../../contexts/ProductContext";
 const ProductModal = ({ handleClick }) => {
+  const { selectedProducts, setSelectedProducts } = useContext(ProductContext);
+  // const [selectedProducts, setSelectedProducts] = useState();
+  const [selectedId, setSelectedId] = useState([]);
   const [productData, setProductData] = useState([]);
   const [search, setSearch] = useState("");
   const getProductData = async () => {
     try {
       const response = await axios.get(
-        `/task/products/search?search=${search}&page=2&limit=1`,
+        `/task/products/search?search=${search}&page=2&limit=10`,
         {
           headers: {
             "x-api-key": "72njgfa948d9aS7gs5",
@@ -22,9 +26,55 @@ const ProductModal = ({ handleClick }) => {
     }
   };
   const handleSearch = (e) => {
-    console.log("e", e.target.value);
     setSearch(e.target.value);
   };
+  const handleCheck = (id, variant = false) => {
+    setSelectedId((prevIds) => {
+      if (variant) {
+        const product = productData.find((product) => product.id === id);
+        if (!product) return prevIds;
+
+        const variantIds = product.variants.map((variant) => variant.id);
+        return [...prevIds, ...variantIds];
+      } else {
+        const index = prevIds.indexOf(id);
+        if (index !== -1) {
+          return prevIds.filter((productId) => productId !== id);
+        } else {
+          return [...prevIds, id];
+        }
+      }
+    });
+  };
+
+  const handleAdd = () => {
+    if (selectedId.length === 0) {
+      return;
+    }
+    const addedProducts = productData
+      .filter((product) => {
+        return (
+          selectedId.includes(product.id) ||
+          product.variants.some((variant) => selectedId.includes(variant.id))
+        );
+      })
+      .map((product) => ({
+        id: product.id,
+        title: product.title,
+        showDiscount: false,
+        variants: product.variants
+          .filter((variant) => selectedId.includes(variant.id))
+          .map((variant) => ({
+            id: variant.id,
+            title: variant.title,
+          })),
+      }));
+    setSelectedProducts((prev) => [...prev, ...addedProducts]);
+    // setSelectedProducts((prev) => [...prev, addedProducts]);
+    setSelectedId([]);
+    handleClick();
+  };
+
   useEffect(() => {
     //implementing debounce logic
     const getData = setTimeout(getProductData, 2000);
@@ -54,8 +104,15 @@ const ProductModal = ({ handleClick }) => {
             ) : (
               <div className="relative transform rounded-lg  bg-white text-left shadow-xl transition-all w-2/3  h-screen  my-12   ">
                 <div className="bg-white">
-                  <p className="font-medium text-lg p-2">Select Products</p>
-
+                  <div className="flex justify-between items-center">
+                    <p className="font-medium text-lg p-2">Select Products</p>
+                    <img
+                      className="cursor-pointer mx-2"
+                      src="./assets/close.svg"
+                      alt="close icon"
+                      onClick={handleClick}
+                    />
+                  </div>
                   <form className=" my-4  border-lightgray p-2 border-y-2 px-12">
                     <div className="relative">
                       <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -91,6 +148,7 @@ const ProductModal = ({ handleClick }) => {
                             id="default-checkbox"
                             type="checkbox"
                             value=""
+                            onClick={() => handleCheck(product.id, true)}
                             className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
                           />
                           <LazyLoad height={36} once>
@@ -106,9 +164,10 @@ const ProductModal = ({ handleClick }) => {
                           return (
                             <div className="flex border-b-2  border-lightgray p-2 pl-10">
                               <input
-                                id="default-checkbox"
+                                id="variant-checkbox"
                                 type="checkbox"
                                 value=""
+                                onClick={() => handleCheck(variant.id)}
                                 className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
                               />
                               <p className="font-normal text-base mx-2 w-2/3 ">
@@ -133,6 +192,7 @@ const ProductModal = ({ handleClick }) => {
                     <button
                       type="button"
                       className="inline-flex w-7 justify-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                      onClick={handleAdd}
                     >
                       Add
                     </button>
