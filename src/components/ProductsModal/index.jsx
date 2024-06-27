@@ -16,7 +16,7 @@ const ProductModal = ({ handleClick }) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `/task/products/search?search=${search}&page=${currentPage}&limit=10`,
+        `http://stageapi.monkcommerce.app/task/products/search?search=${search}&page=${currentPage}&limit=10`,
         {
           headers: {
             "x-api-key": "72njgfa948d9aS7gs5",
