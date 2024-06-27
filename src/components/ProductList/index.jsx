@@ -53,7 +53,7 @@ const ProductList = () => {
       >
         {selectedProducts?.map((selectedProduct, ind) => {
           return (
-            <SortableItem key={selectedProduct}>
+            <SortableItem key={selectedProduct.id}>
               <div className="productlist flex" key={selectedProduct.id}>
                 <div className="mt-4 mx-2">
                   <img src="./assets/drag.svg" alt="drag-icon" />

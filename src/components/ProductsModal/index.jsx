@@ -24,7 +24,7 @@ const ProductModal = ({ handleClick }) => {
         }
       );
       if (response.data.length !== 0) {
-        setProductData((prevProducts) => [...prevProducts, ...response.data]);
+        setProductData(response.data);
         setCurrentPage((prevPage) => prevPage + 1);
       }
       setLoading(false);
@@ -100,6 +100,7 @@ const ProductModal = ({ handleClick }) => {
   useEffect(() => {
     const getData = setTimeout(getProductData, 2000);
     return () => clearTimeout(getData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
   // Infinite loading if the user scrolls to the end
   useEffect(() => {
@@ -109,7 +110,9 @@ const ProductModal = ({ handleClick }) => {
         getProductData();
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPage]);
+
   return (
     <div>
       <div
@@ -188,7 +191,10 @@ const ProductModal = ({ handleClick }) => {
                         {/*Mapping  variants  */}
                         {product?.variants?.map((variant) => {
                           return (
-                            <div className="flex border-b-2  border-lightgray p-2 pl-10">
+                            <div
+                              className="flex border-b-2  border-lightgray p-2 pl-10"
+                              key={variant.id}
+                            >
                               <input
                                 id="variant-checkbox"
                                 type="checkbox"
