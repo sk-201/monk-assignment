@@ -39,10 +39,26 @@ const ProductModal = ({ handleClick }) => {
     }
     setSearch(e.target.value);
   };
+
   //Handling check functionality for products as well as variants
   const handleCheck = (id, variant = false) => {
     setSelectedId((prevIds) => {
       if (variant) {
+        const element = document.getElementsByClassName(
+          `variant-checkbox-${id}`
+        );
+        const productCheckbox = document.getElementsByClassName(
+          `def-checkbox-${id}`
+        );
+
+        for (let i = 0; i < element.length; i++) {
+          if (productCheckbox[0].checked) {
+            element[i].checked = true;
+          } else {
+            element[i].checked = false;
+          }
+        }
+
         const product = productData.find((product) => product.id === id);
         if (!product) return prevIds;
 
@@ -55,6 +71,9 @@ const ProductModal = ({ handleClick }) => {
         const updatedIds = prevIds.filter(
           (prevId) => !variantIds.includes(prevId)
         );
+
+        // handleVerifyVariantCheck(id);
+
         return [...updatedIds, ...newIds];
       } else {
         if (prevIds.includes(id)) {
@@ -81,11 +100,13 @@ const ProductModal = ({ handleClick }) => {
         id: product.id,
         title: product.title,
         showDiscount: false,
+        showVariants: false,
         variants: product.variants
           .filter((variant) => selectedId.includes(variant.id))
           .map((variant) => ({
             id: variant.id,
             title: variant.title,
+            showDiscount: false,
           })),
       }));
     setSelectedProducts((prev) => {
@@ -173,7 +194,7 @@ const ProductModal = ({ handleClick }) => {
                             type="checkbox"
                             value=""
                             onClick={() => handleCheck(product.id, true)}
-                            className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
+                            className={`w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary def-checkbox-${product.id}`}
                           />
                           {/* Lazyloading Images for better performance */}
                           <LazyLoad height={36} once>
@@ -200,7 +221,7 @@ const ProductModal = ({ handleClick }) => {
                                 type="checkbox"
                                 value=""
                                 onClick={() => handleCheck(variant.id)}
-                                className="w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary"
+                                className={`w-6 h-6 mx-2 text-primary bg-gray-100  rounded accent-primary variant-checkbox-${variant.product_id}`}
                               />
                               <p className="font-normal text-base mx-2 w-2/3 ">
                                 {variant.title}

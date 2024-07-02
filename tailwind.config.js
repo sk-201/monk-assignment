@@ -8,6 +8,7 @@ module.exports = {
       white: "#FFFFFF",
       red: "#eb4034",
       gray: "#979da6",
+      blue: "#006EFF",
       lightgray: "#0000001A",
       darkgray: " #00000099",
       searchBar: "#00000012",

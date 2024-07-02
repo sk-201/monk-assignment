@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 
 export const ProductContext = createContext();
 
@@ -9,10 +9,13 @@ export const ProductProvider = ({ children }) => {
       id: 1,
       title: "",
       showDiscount: false,
+      showVariants: false,
     },
   ];
   const [selectedProducts, setSelectedProducts] = useState(defaultProduct);
-
+  useEffect(() => {
+    console.log("s", selectedProducts);
+  }, [selectedProducts]);
   return (
     <ProductContext.Provider
       value={{
